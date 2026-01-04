@@ -3,30 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <title>Alimentation Tounkara</title>
-
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px;
+      padding: 20px;
       background: #f5f5f5;
     }
 
     h1 {
       color: #2e7d32;
+      margin-bottom: 10px;
     }
-    
+
+    img {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 10px;
+      margin: 20px auto;
+    }
+
     h2 {
-  color: #2e7d32;
-  margin-top: 30px;
-}
-
-    p {
-      font-size: 18px;
-      margin: 20px 0;
+      color: #2e7d32;
+      margin-top: 30px;
     }
 
-    a {
+    ul {
+      list-style: none;
+      padding: 0;
+      font-size: 18px;
+      margin: 0;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    a#whatsapp-btn {
       display: inline-block;
       margin-top: 20px;
       padding: 12px 20px;
@@ -35,6 +48,80 @@
       text-decoration: none;
       border-radius: 6px;
       font-size: 18px;
+    }
+
+    select {
+      font-size: 18px;
+      padding: 8px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Alimentation Tounkara</h1>
+
+  <!-- Image de la boutique -->
+  <img src="boutique.jpg" alt="Photo de la boutique">
+
+  <!-- Liste dynamique des produits -->
+  <h2>Produits disponibles</h2>
+  <ul id="produits-list"></ul>
+
+  <!-- Sélection du produit pour WhatsApp -->
+  <select id="produit-select">
+    <option value="">Choisir un produit</option>
+  </select>
+
+  <!-- Bouton WhatsApp -->
+  <a id="whatsapp-btn" href="#" target="_blank">
+    💬 Commander via WhatsApp
+  </a>
+
+  <!-- Script pour récupérer les produits depuis Google Sheet -->
+  <script>
+    // Remplace par ton URL Sheet.best
+    const url = "https://sheet.best/api/sheets/VOTRE_ID_SHEET";
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const ul = document.getElementById("produits-list");
+        const select = document.getElementById("produit-select");
+
+        data.forEach(item => {
+          // Ajouter dans la liste HTML
+          const li = document.createElement("li");
+          li.textContent = `🍴 ${item.Nom} - ${item.Prix} FCFA (${item.Description})`;
+          ul.appendChild(li);
+
+          // Ajouter dans le menu déroulant
+          const option = document.createElement("option");
+          option.value = `${item.Nom} - ${item.Prix} FCFA`;
+          option.textContent = item.Nom;
+          select.appendChild(option);
+        });
+      })
+      .catch(error => console.log("Erreur :", error));
+
+    // Script pour ouvrir WhatsApp avec produit choisi
+    const btn = document.getElementById("whatsapp-btn");
+    const select = document.getElementById("produit-select");
+
+    btn.addEventListener("click", () => {
+      const produit = select.value;
+      if(produit === "") {
+        alert("Veuillez choisir un produit !");
+        return;
+      }
+      const numero = "22371453198"; // Remplace par ton numéro
+      const message = encodeURIComponent(`Bonjour, je souhaite commander : ${produit}`);
+      btn.href = `https://wa.me/${numero}?text=${message}`;
+    });
+  </script>
+
+</body>
+</html>      font-size: 18px;
     }
   </style>
 </head>
