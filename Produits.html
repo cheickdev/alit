@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gestion Produits</title>
+<style>
+body { font-family: Arial; padding: 15px; }
+input, button { width: 100%; padding: 8px; margin: 6px 0; }
+.prod { border: 1px solid #ccc; padding: 8px; margin: 5px 0; }
+.small { font-size: 12px; color: #555; }
+</style>
+</head>
+<body>
+
+<h2>Ajouter / Modifier produit</h2>
+
+<input id="codeBarres" placeholder="Code-barres">
+<input id="nom" placeholder="Nom du produit">
+<input id="cout" placeholder="Coût unitaire">
+<input id="prix" placeholder="Prix de vente">
+<input id="stock" placeholder="Stock">
+
+<button onclick="enregistrer()">Enregistrer</button>
+
+<hr>
+
+<h3>Produits existants</h3>
+<input placeholder="Rechercher..." onkeyup="filtrer(this.value)">
+
+<div id="liste"></div>
+
+<script>
+const API = "TON_URL_APPS_SCRIPT";
+
+let produits = [];
+
+// Charger produits
+fetch(API + "?sheet=Produits")
+  .then(r => r.json())
+  .then(data => {
+    produits = data;
+    afficher(data);
+  });
+
+function afficher(list) {
+  const div = document.getElementById("liste");
+  div.innerHTML = "";
+  list.forEach(p => {
+    div.innerHTML += `
+      <div class="prod" onclick='charger("${p.codeBarres}")'>
+        <b>${p.nom}</b><br>
+        Prix: ${p.prix} | Stock: ${p.stock}
+        <div class="small">${p.codeBarres}</div>
+      </div>`;
+  });
+}
+
+function filtrer(v) {
+  v = v.toLowerCase();
+  afficher(produits.filter(p =>
+    p.nom.toLowerCase().includes(v) || p.codeBarres.includes(v)
+  ));
+}
+
+function charger(code) {
+  const p = produits.find(x => x.codeBarres == code);
+  if (!p) return;
+
+  document.getElementById("codeBarres").value = p.codeBarres;
+  document.getElementById("nom").value = p.nom;
+  document.getElementById("cout").value = p.cout;
+  document.getElementById("prix").value = p.prix;
+  document.getElementById("stock").value = p.stock;
+}
+
+function enregistrer() {
+  const data = {
+    sheet: "Produits",
+    codeBarres: document.getElementById("codeBarres").value,
+    nom: document.getElementById("nom").value,
+    cout: document.getElementById("cout").value,
+    prix: document.getElementById("prix").value,
+    stock: document.getElementById("stock").value,
+    nbPiecesInBox: "",
+    boxCost: "",
+    boxPrice: "",
+    boxCodesBarres: ""
+  };
+
+  if (!data.codeBarres || !data.nom) {
+    alert("Code-barres et nom obligatoires");
+    return;
+  }
+
+  fetch(API + "?sheet=Produits", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(() => {
+    alert("Produit enregistré");
+    location.reload();
+  });
+}
+</script>
+
+</body>
+</html>
