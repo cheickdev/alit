@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Test Ajout Produit</title>
+</head>
+<body>
+
+<h3>Ajout produit</h3>
+
+<input id="code" placeholder="Code-barres"><br>
+<input id="nom" placeholder="Nom"><br>
+<input id="cout" placeholder="Coût"><br>
+<input id="prix" placeholder="Prix"><br>
+<input id="stock" placeholder="Stock"><br>
+
+<button onclick="ajouter()">Ajouter</button>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbz29u0A0TVhOXgW_lKCxDzPjkIzhzI7mpulJg13I4uCllYHew5krsUEUVLQ-mKUgyrDYA/exec";
+
+function ajouter() {
+  const data = {
+    codeBarres: document.getElementById("code").value,
+    nom: document.getElementById("nom").value,
+    cout: document.getElementById("cout").value,
+    prix: document.getElementById("prix").value,
+    stock: document.getElementById("stock").value,
+    nbPiecesInBox:"",
+    boxCost:"",
+    boxPrice:"",
+    boxCodesBarres:""
+  };
+
+  fetch(API + "?sheet=Produits", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(() => alert("Produit ajouté"))
+  .catch(err => alert("Erreur"));
+}
+</script>
+
+</body>
+</html>
