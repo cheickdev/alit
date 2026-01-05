@@ -66,7 +66,7 @@ function charger(code) {
   const p = produits.find(x => x.codeBarres == code);
   if (!p) return;
 
-  document.getElementById("codeBarres").value = p.codeBarres;
+  document.getElementById("codeBarres").value = p.codesBarres;
   document.getElementById("nom").value = p.nom;
   document.getElementById("cout").value = p.cout;
   document.getElementById("prix").value = p.prix;
