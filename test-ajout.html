@@ -2,44 +2,72 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Test Ajout Produit</title>
+<title>Ajouter produit</title>
+<style>
+body { font-family: Arial; padding: 20px; }
+input, button { display: block; margin: 10px 0; padding: 8px; width: 100%; }
+</style>
 </head>
 <body>
 
-<h3>Ajout produit</h3>
+<h1>Ajouter produit</h1>
 
-<input id="code" placeholder="Code-barres"><br>
-<input id="nom" placeholder="Nom"><br>
-<input id="cout" placeholder="Coût"><br>
-<input id="prix" placeholder="Prix"><br>
-<input id="stock" placeholder="Stock"><br>
+<input id="code" placeholder="Code-barres">
+<input id="nom" placeholder="Nom">
+<input id="cout" placeholder="Coût">
+<input id="prix" placeholder="Prix">
+<input id="stock" placeholder="Stock">
 
-<button type="submit" onclick="ajouter()">
-  Ajouter
-</button>
+<button type="button" onclick="ajouterProduit()">Ajouter</button>
 
 <script>
-const API = "https://script.google.com/macros/s/AKfycbyYFHlTUjymrkddiJ54wzoZTOUsYRWCGvFBJkw0gs-LYX-diltb4GqrwZ7DagmzEmC-hQ/exec";
+const API = "https://script.google.com/macros/s/AKfycbyYFHlTUjymrkddiJ54wzoZTOUsYRWCGvFBJkw0gs-LYX-diltb4GqrwZ7DagmzEmC-hQ/exec"; // Remplace TON_URL par ton URL Apps Script
 
-function ajouter() {
-  const data = {
-    codeBarres: document.getElementById("codesBarres").value,
-    nom: document.getElementById("nom").value,
-    cout: document.getElementById("cout").value,
-    prix: document.getElementById("prix").value,
-    stock: document.getElementById("stock").value,
-    nbPiecesInBox:"",
-    boxCost:"",
-    boxPrice:"",
-    boxCodesBarres:""
-  };
+function ajouterProduit() {
+    // Lire les valeurs
+    const data = {
+        sheet: "Produits", // indique à Apps Script quelle feuille
+        codeBarres: document.getElementById("code").value,
+        nom: document.getElementById("nom").value,
+        cout: document.getElementById("cout").value,
+        prix: document.getElementById("prix").value,
+        stock: document.getElementById("stock").value,
+        nbPiecesInBox: "",
+        boxCost: "",
+        boxPrice: "",
+        boxCodesBarres: ""
+    };
 
-  fetch(API + "?sheet=Produits", {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(() => alert("Produit ajouté"))
-  .catch(err => alert("Erreur"));
+    // Vérification rapide
+    if(!data.codeBarres || !data.nom){
+        alert("Code-barres et nom obligatoires");
+        return;
+    }
+
+    // Envoi POST
+    fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(res => {
+        if(res.status === "OK"){
+            alert("Produit ajouté avec succès !");
+            // Réinitialiser les champs
+            document.getElementById("code").value = "";
+            document.getElementById("nom").value = "";
+            document.getElementById("cout").value = "";
+            document.getElementById("prix").value = "";
+            document.getElementById("stock").value = "";
+        } else {
+            alert("Erreur : " + JSON.stringify(res));
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Erreur réseau ou API");
+    });
 }
 </script>
 
