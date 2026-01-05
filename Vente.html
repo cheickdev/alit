@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Caisse</title>
+<style>
+body { font-family: Arial; padding: 15px; }
+input, button { width: 100%; padding: 8px; margin: 5px 0; }
+.prod { border: 1px solid #ccc; padding: 8px; margin: 5px 0; }
+</style>
+</head>
+<body>
+
+<h2>Vente</h2>
+
+<input id="search" placeholder="Code ou nom" onkeyup="filtrer()">
+
+<div id="produits"></div>
+
+<h3>Panier</h3>
+<div id="panier"></div>
+<p>Total: <span id="total">0</span></p>
+
+<button onclick="valider()">Valider la vente</button>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbyiPojn2bOLwZn1WFo1pc8pNhf_ewZZNHSlZ7aenD6e7X0M3kTN1gBRJS_Z-919dBeGIw/exec";
+let produits = [];
+let panier = [];
+
+fetch(API + "?sheet=Produits")
+  .then(r => r.json())
+  .then(d => { produits = d; afficherProduits(d); });
+
+function afficherProduits(list) {
+  const div = document.getElementById("produits");
+  div.innerHTML = "";
+  list.forEach(p => {
+    div.innerHTML += `<div class="prod" onclick='ajouter("${p.codeBarres}")'>
+      ${p.nom} - ${p.prix}
+    </div>`;
+  });
+}
+
+function filtrer() {
+  const v = document.getElementById("search").value.toLowerCase();
+  afficherProduits(produits.filter(p =>
+    p.nom.toLowerCase().includes(v) || p.codeBarres.includes(v)
+  ));
+}
+
+function ajouter(code) {
+  const p = produits.find(x => x.codeBarres == code);
+  panier.push(p);
+  afficherPanier();
+}
+
+function afficherPanier() {
+  let t = 0;
+  document.getElementById("panier").innerHTML =
+    panier.map(p => {
+      t += Number(p.prix);
+      return `<div>${p.nom} - ${p.prix}</div>`;
+    }).join("");
+  document.getElementById("total").innerText = t;
+}
+
+function valider() {
+  const paye = prompt("Montant payé ?");
+  const total = Number(document.getElementById("total").innerText);
+  const data = {
+    sheet: "Ventes",
+    produits: panier,
+    montantCmd: total,
+    montantPaye: paye,
+    resteAPayer: total - paye
+  };
+
+  fetch(API + "?sheet=Ventes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(() => {
+    alert("Vente enregistrée");
+    panier = [];
+    afficherPanier();
+  });
+}
+</script>
+
+</body>
+</html>
