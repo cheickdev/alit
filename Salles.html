@@ -20,7 +20,7 @@
 const API = "https://script.google.com/macros/s/AKfycbxIMlrUNJG8f7HREwhZlA9OVfjF960fwA3ZkriddvSGFqOw31EPumyv9xksdT1nbpS8MA/exec";
 
 function charger() {
-  fetch(API)
+  fetch(API+"?sheet=salles")
     .then(r => r.json())
     .then(data => {
       document.getElementById("out").textContent =
@@ -34,7 +34,7 @@ function ajouter() {
     ajout: Number(document.getElementById("ajout").value)
   };
 alert("On est là");
-  fetch(API, {
+  fetch(API+"?sheet=salles", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
