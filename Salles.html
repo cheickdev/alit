@@ -29,19 +29,23 @@ function charger() {
 }
 
 function ajouter() {
-  const data = {
-    num: Number(document.getElementById("num").value),
-    ajout: Number(document.getElementById("ajout").value)
-  };
-alert("On est là");
-  fetch(API+"?sheet=salles", {
+  const num = document.getElementById("num").value;
+  const ajout = document.getElementById("ajout").value;
+  
+  // On utilise URLSearchParams pour éviter le "preflight" CORS complexe
+  const params = new URLSearchParams();
+  params.append("num", num);
+  params.append("ajout", ajout);
+
+  fetch(API + "?sheet=salles", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    body: params // Envoi comme un formulaire standard
   })
   .then(r => r.json())
-  .then(res => alert("Cool"+res.status));
+  .then(res => alert("Succès : " + res.status))
+  .catch(err => console.error("Erreur détaillée:", err));
 }
+
 </script>
 
 </body>
