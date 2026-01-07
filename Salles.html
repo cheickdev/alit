@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Salles</title>
+</head>
+<body>
+
+<h2>Salles</h2>
+<button onclick="charger()">Charger salles</button>
+
+<pre id="out"></pre>
+
+<h3>Ajouter des places</h3>
+<input id="num" placeholder="Numéro salle">
+<input id="ajout" placeholder="Nombre de places à ajouter">
+<button onclick="ajouter()">Ajouter</button>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbxIMlrUNJG8f7HREwhZlA9OVfjF960fwA3ZkriddvSGFqOw31EPumyv9xksdT1nbpS8MA/exec";
+
+function charger() {
+  fetch(API)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("out").textContent =
+        JSON.stringify(data, null, 2);
+    });
+}
+
+function ajouter() {
+  const data = {
+    num: Number(document.getElementById("num").value),
+    ajout: Number(document.getElementById("ajout").value)
+  };
+
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => alert(res.status));
+}
+</script>
+
+</body>
+</html>
