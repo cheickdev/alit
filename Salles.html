@@ -33,7 +33,7 @@ function ajouter() {
     num: Number(document.getElementById("num").value),
     ajout: Number(document.getElementById("ajout").value)
   };
-
+alert("On est là");
   fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
